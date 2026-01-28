@@ -1,0 +1,3524 @@
+{
+	"info": {
+		"_postman_id": "b8a297bc-2034-4142-97fd-54a6849a1c2e",
+		"name": "Postman Practice [Bartosz Dąbek]",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50039215",
+		"_collection_link": "https://www.postman.com/bartek1098-1320830/workspace/postman-practice-bartosz-dbek/collection/50039215-b8a297bc-2034-4142-97fd-54a6849a1c2e?action=share&source=collection_link&creator=50039215"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Sign Up - Successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Assert JSON contain properties: username, email, token, bio, image\", function () {",
+									"  pm.response.to.have.jsonBody('user.username')",
+									"    .and.to.have.jsonBody('user.email')",
+									"    .and.to.have.jsonBody('user.token')",
+									"    .and.to.have.jsonBody('user.bio')",
+									"    .and.to.have.jsonBody('user.image') ",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						},
+						"description": "This request demonstrates a successful user sign-up scenario. It creates a new user account with a unique username and email using random integers to ensure uniqueness. The request expects a 201 Created response with the user details and authentication token."
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In - Successful",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, email, token, bio, image\", function () {\r",
+									"  pm.response.to.have.jsonBody('user.username')\r",
+									"    .and.to.have.jsonBody('user.email')\r",
+									"    .and.to.have.jsonBody('user.token')\r",
+									"    .and.to.have.jsonBody('user.bio')\r",
+									"    .and.to.have.jsonBody('user.image') \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Returned username and email match the registered ones\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.user.username).to.eql(pm.collectionVariables.get(\"username\"));\r",
+									"    pm.expect(jsonData.user.email).to.eql(pm.collectionVariables.get(\"email\"));\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In with non-existing credential",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"testuser{{$randomInt}}@example.com\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In with empty email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In with empty password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Up with taken username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"newemail{{$randomInt}}@example.com\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Up with taken email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"newusername{{$randomInt}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Up with username starting from number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"1{{username}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n  } \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with username with 41 symbols",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const chars = \"abcdefghijklmnopqrstuvwxyz\";\r",
+									"let result = \"\";\r",
+									"\r",
+									"for (let i = 0; i < 41; i++) {\r",
+									"  result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+									"}\r",
+									"\r",
+									"pm.variables.set(\"random41\", result);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{random41}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with username with spaces",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"a {{username}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with empty username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with empty email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with email without @",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"newemail{{$randomInt}}example.com\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with email without .",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"newemail{{$randomInt}}@examplecom\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with email without name part",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"@{{$randomFirstName}}.com\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with email with more than 254 symbols",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const chars = \"abcdefghijklmnopqrstuvwxyz\";",
+									"let result = \"\";",
+									"",
+									"for (let i = 0; i < 250; i++) {",
+									"  result += chars.charAt(Math.floor(Math.random() * chars.length));",
+									"}",
+									"",
+									"pm.variables.set(\"random250\", result);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"{{random250}}@example.com\",\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up with empty password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain token\", function () {\r",
+									"    pm.response.to.not.have.jsonBody('user.token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}users",
+							"host": [
+								"{{BASE_URL}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get info about user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, email, token, bio, image\", function () {\r",
+									"  pm.response.to.have.jsonBody('user.username')\r",
+									"    .and.to.have.jsonBody('user.email')\r",
+									"    .and.to.have.jsonBody('user.token')\r",
+									"    .and.to.have.jsonBody('user.bio')\r",
+									"    .and.to.have.jsonBody('user.image') \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Returned username and email match the registered ones\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.user.username).to.eql(pm.collectionVariables.get(\"username\"));\r",
+									"    pm.expect(jsonData.user.email).to.eql(pm.collectionVariables.get(\"email\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update info about user: image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, email, token, bio, image\", function () {\r",
+									"  pm.response.to.have.jsonBody('user.username')\r",
+									"    .and.to.have.jsonBody('user.email')\r",
+									"    .and.to.have.jsonBody('user.token')\r",
+									"    .and.to.have.jsonBody('user.bio')\r",
+									"    .and.to.have.jsonBody('user.image') \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Image is not null in the user object\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.user.image).to.be.not.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Returned username and email match the registered ones\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.user.username).to.eql(pm.collectionVariables.get(\"username\"));\r",
+									"    pm.expect(jsonData.user.email).to.eql(pm.collectionVariables.get(\"email\"));\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"image\": \"https://petapixel.com/assets/uploads/2024/01/The-Star-of-System-Sol-Rectangle-640x800.jpg\"\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update info about user: bio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, email, token, bio, image\", function () {\r",
+									"  pm.response.to.have.jsonBody('user.username')\r",
+									"    .and.to.have.jsonBody('user.email')\r",
+									"    .and.to.have.jsonBody('user.token')\r",
+									"    .and.to.have.jsonBody('user.bio')\r",
+									"    .and.to.have.jsonBody('user.image') \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Bio is not null in the user object\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.user.bio).to.be.not.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Returned username and email match the registered ones\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.user.username).to.eql(pm.collectionVariables.get(\"username\"));\r",
+									"    pm.expect(jsonData.user.email).to.eql(pm.collectionVariables.get(\"email\"));\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"bio\": \"{{$randomWords}}\"\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update info about user: username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, email, token, bio, image\", function () {\r",
+									"  pm.response.to.have.jsonBody('user.username')\r",
+									"    .and.to.have.jsonBody('user.email')\r",
+									"    .and.to.have.jsonBody('user.token')\r",
+									"    .and.to.have.jsonBody('user.bio')\r",
+									"    .and.to.have.jsonBody('user.image') \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Returned email match the registered ones\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.user.email).to.eql(pm.collectionVariables.get(\"email\"));\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Returned username is different from the registered one\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const registeredUsername = pm.collectionVariables.get(\"username\");\r",
+									"    pm.expect(jsonData.user.username).to.not.eql(registeredUsername);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{$randomFirstName}}\"\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update info about user: email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, email, token, bio, image\", function () {\r",
+									"  pm.response.to.have.jsonBody('user.username')\r",
+									"    .and.to.have.jsonBody('user.email')\r",
+									"    .and.to.have.jsonBody('user.token')\r",
+									"    .and.to.have.jsonBody('user.bio')\r",
+									"    .and.to.have.jsonBody('user.image') \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Returned username match the registered ones\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.user.username).to.eql(pm.collectionVariables.get(\"username\"));\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Returned email is different from the registered one\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const registeredEmail = pm.collectionVariables.get(\"email\");\r",
+									"    pm.expect(jsonData.user.email).to.not.eql(registeredEmail);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"{{$randomEmail}}\"\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update info about user: password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Assert JSON contain properties: username, email, token, bio, image\", function () {",
+									"  pm.response.to.have.jsonBody('user.username')",
+									"    .and.to.have.jsonBody('user.email')",
+									"    .and.to.have.jsonBody('user.token')",
+									"    .and.to.have.jsonBody('user.bio')",
+									"    .and.to.have.jsonBody('user.image') ",
+									"});",
+									"",
+									"pm.test(\"Returned username and email match the registered ones\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.user.username).to.eql(pm.collectionVariables.get(\"username\"));",
+									"    pm.expect(jsonData.user.email).to.eql(pm.collectionVariables.get(\"email\"));",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n     \"password\": \"{{$randomPassword}}\"\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update info about user without authorization",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"password\": \"{{password}}\"\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Articles",
+			"item": [
+				{
+					"name": "Create an article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: slug, title, description, body, tagList\", function () {\r",
+									"  pm.response.to.have.jsonBody('article.slug')\r",
+									"    .and.to.have.jsonBody('article.title')\r",
+									"    .and.to.have.jsonBody('article.description')\r",
+									"    .and.to.have.jsonBody('article.body')\r",
+									"    .and.to.have.jsonBody('article.tagList') \r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"slug\", pm.response.json().article.slug);\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));\r",
+									"}, 500);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"article\": {\r\n    \"title\": \"{{$randomWord}}\",\r\n    \"description\": \"{{$randomWords}}\",\r\n    \"body\": \"{{$randomWords}}{{$randomWords}}{{$randomWords}}\",\r\n    \"tagList\": []\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}articles",
+							"host": [
+								"{{BASE_URL}}articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update an article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: slug, title, description, body, tagList\", function () {\r",
+									"  pm.response.to.have.jsonBody('article.slug')\r",
+									"    .and.to.have.jsonBody('article.title')\r",
+									"    .and.to.have.jsonBody('article.description')\r",
+									"    .and.to.have.jsonBody('article.body')\r",
+									"    .and.to.have.jsonBody('article.tagList') \r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"slug\", pm.response.json().article.slug);\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));\r",
+									"}, 500);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"article\": {\r\n    \"title\": \"{{$randomWord}}\",\r\n    \"description\": \"{{$randomWords}}\",\r\n    \"body\": \"{{$randomWords}}{{$randomWords}}{{$randomWords}}\",\r\n    \"tagList\": []\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"  pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get an article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: slug, title, description, body, tagList\", function () {\r",
+									"  pm.response.to.have.jsonBody('article.slug')\r",
+									"    .and.to.have.jsonBody('article.title')\r",
+									"    .and.to.have.jsonBody('article.description')\r",
+									"    .and.to.have.jsonBody('article.body')\r",
+									"    .and.to.have.jsonBody('article.tagList') \r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"slug\", pm.response.json().article.slug);\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));\r",
+									"}, 500);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get articles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Articles list is not empty\", function () {\r",
+									"  pm.response.to.have.jsonBody('articles.0').is.not.null\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get articles from Your feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewUser2\"));\r",
+									"}, 1500);\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser2\"));\r",
+									"}, 2000);\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"followUser\"));\r",
+									"}, 2500);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/feed?limit=10&offset=0",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"feed"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get articles from Global feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Articles list is not empty\", function () {\r",
+									"  pm.response.to.have.jsonBody('articles.0').is.not.null\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles?limit=10&offset=0",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get articles by tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Tag is included\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const expectedTag = pm.collectionVariables.get(\"tag\");\r",
+									"\r",
+									"    const allTags = jsonData.articles.flatMap(article => article.tagList);\r",
+									"\r",
+									"    pm.expect(allTags).to.include(expectedTag);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles?limit=10&tag={{tag}}&offset=0",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "tag",
+									"value": "{{tag}}"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create an article without authorization",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"article\": {\r\n    \"title\": \"{{$randomWord}}\",\r\n    \"description\": \"{{$randomWords}}\",\r\n    \"body\": \"{{$randomWords}}{{$randomWords}}{{$randomWords}}\",\r\n    \"tagList\": []\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/articles",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an article without authorization",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an article of another user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"  pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));\r",
+									"}, 500);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewUser2\"));\r",
+									"}, 1500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser2\"));\r",
+									"}, 2000);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token2}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete non-existing article",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));\r",
+									"}, 1500);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"  pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Get info about profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, bio, image, following\", function () {\r",
+									"  pm.response.to.have.jsonBody('profile.username')\r",
+									"    .and.to.have.jsonBody('profile.following')\r",
+									"    .and.to.have.jsonBody('profile.bio')\r",
+									"    .and.to.have.jsonBody('profile.image') \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}profiles/{{username}}",
+							"host": [
+								"{{BASE_URL}}profiles"
+							],
+							"path": [
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Follow the user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, bio, image, following\", function () {\r",
+									"  pm.response.to.have.jsonBody('profile.username')\r",
+									"    .and.to.have.jsonBody('profile.following')\r",
+									"    .and.to.have.jsonBody('profile.bio')\r",
+									"    .and.to.have.jsonBody('profile.image') \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Following status is true after successful follow\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.profile.following).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser2\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 1000);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/profiles/{{username2}}/follow",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"profiles",
+								"{{username2}}",
+								"follow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow the user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assert JSON contain properties: username, bio, image, following\", function () {\r",
+									"  pm.response.to.have.jsonBody('profile.username')\r",
+									"    .and.to.have.jsonBody('profile.following')\r",
+									"    .and.to.have.jsonBody('profile.bio')\r",
+									"    .and.to.have.jsonBody('profile.image') \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Following status is false after successful unfollow\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.profile.following).to.be.false;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewUser2\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser2\"));\r",
+									"}, 1000);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"followUser\"));\r",
+									"}, 1500);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/profiles/{{username}}/follow",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"profiles",
+								"{{username}}",
+								"follow"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "Get tags",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Tags is not empty\", function () {\r",
+									"  pm.response.to.have.jsonBody('tags');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/tags",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tags"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Get comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Comments array is not empty\", function () {\r",
+									"  pm.response.to.have.jsonBody('comments[0]').is.not.empty\r",
+									"});\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));\r",
+									"}, 500);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewComment\"));\r",
+									"    eval(pm.collectionVariables.get(\"createNewComment\"));\r",
+									"}, 1500);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}/comments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post a comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Assert JSON contain properties: ID, body\", function () {",
+									"  pm.response.to.have.jsonBody('comment.id')",
+									"  .and.to.have.jsonBody('comment.body')",
+									"});",
+									"",
+									"setTimeout(() => {",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));",
+									"}, 500);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1500);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"comment\": {\r\n    \"body\": \"{{$randomWords}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}/comments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"  pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"setTimeout(() => {",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));",
+									"}, 500);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewComment\"));\r",
+									"}, 1500);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}/comments/{{commentID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}",
+								"comments",
+								"{{commentID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a comment of another user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"  pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"setTimeout(() => {",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));",
+									"}, 500);",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewComment\"));\r",
+									"}, 1500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewUser2\"));\r",
+									"}, 2000);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser2\"));\r",
+									"}, 2500);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token2}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}/comments/{{commentID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}",
+								"comments",
+								"{{commentID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a comment without authorization",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"  pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"setTimeout(() => {",
+									"    eval(pm.collectionVariables.get(\"deleteArticle\"));",
+									"}, 500);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"eval(pm.collectionVariables.get(\"createNewUser\"));\r",
+									"\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"loginUser\"));\r",
+									"}, 500);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewArticle\"));\r",
+									"}, 1000);\r",
+									"setTimeout(() => {\r",
+									"    eval(pm.collectionVariables.get(\"createNewComment\"));\r",
+									"}, 1500);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/articles/{{slug}}/comments/{{commentID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"articles",
+								"{{slug}}",
+								"comments",
+								"{{commentID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					"",
+					"const rnd = Math.floor(Math.random() * 1000000);",
+					"const username = `user${rnd}`;",
+					"const username2 = `user2${rnd}`;",
+					"const email = `test${rnd}@example.com`;",
+					"const email2 = `test2${rnd}@example.com`;",
+					"const password = `Qwerty123!`;",
+					"",
+					"",
+					"pm.collectionVariables.set(\"username\", username);",
+					"pm.collectionVariables.set(\"username2\", username2);",
+					"pm.collectionVariables.set(\"email\", email);",
+					"pm.collectionVariables.set(\"email2\", email2);",
+					"pm.collectionVariables.set(\"password\", password);",
+					"",
+					"pm.collectionVariables.set(\"createNewUser\", `(function(pm) {",
+					"    pm.sendRequest({",
+					"        url: pm.variables.replaceIn(\"{{BASE_URL}}users\"),",
+					"        method: 'POST',",
+					"        header: { 'Content-Type': 'application/json' },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                user: { ",
+					"                    username: pm.collectionVariables.get(\"username\"), ",
+					"                    email: pm.collectionVariables.get(\"email\"), ",
+					"                    password: pm.collectionVariables.get(\"password\") ",
+					"                }",
+					"            })",
+					"        }",
+					"    }, (err, res) => {",
+					"",
+					"    });",
+					"})(pm);`);",
+					"",
+					"pm.collectionVariables.set(\"createNewUser2\", `(function(pm) {",
+					"    pm.sendRequest({",
+					"        url: pm.variables.replaceIn(\"{{BASE_URL}}users\"),",
+					"        method: 'POST',",
+					"        header: { 'Content-Type': 'application/json' },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                user: { ",
+					"                    username: pm.collectionVariables.get(\"username2\"), ",
+					"                    email: pm.collectionVariables.get(\"email2\"), ",
+					"                    password: pm.collectionVariables.get(\"password\") ",
+					"                }",
+					"            })",
+					"        }",
+					"    }, (err, res) => {",
+					"",
+					"    });",
+					"})(pm);`);",
+					"",
+					"pm.collectionVariables.set(\"loginUser\", `(function(pm) {",
+					"    pm.sendRequest({",
+					"        url: pm.variables.replaceIn(\"{{BASE_URL}}users/login\"),",
+					"        method: 'POST',",
+					"        header: { 'Content-Type': 'application/json' },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                user: { ",
+					"                    email: pm.collectionVariables.get(\"email\"), ",
+					"                    password: pm.collectionVariables.get(\"password\") ",
+					"                }",
+					"            })",
+					"        }",
+					"    }, (err, res) => {",
+					"        if (res) {",
+					"            const token = res.json().user.token; ",
+					"            pm.collectionVariables.set(\"token\", token);",
+					"        }",
+					"    });",
+					"})(pm);`);",
+					"",
+					"pm.collectionVariables.set(\"loginUser2\", `(function(pm) {",
+					"    pm.sendRequest({",
+					"        url: pm.variables.replaceIn(\"{{BASE_URL}}users/login\"),",
+					"        method: 'POST',",
+					"        header: { 'Content-Type': 'application/json' },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                user: { ",
+					"                    email: pm.collectionVariables.get(\"email2\"), ",
+					"                    password: pm.collectionVariables.get(\"password\") ",
+					"                }",
+					"            })",
+					"        }",
+					"    }, (err, res) => {",
+					"        if (res) {",
+					"           if (res) {",
+					"            const token2 = res.json().user.token; ",
+					"            pm.collectionVariables.set(\"token2\", token2);",
+					"        }",
+					"        }",
+					"    });",
+					"})(pm);`);",
+					"",
+					"pm.collectionVariables.set(\"createNewArticle\", `(function(pm) {",
+					"    const token = pm.collectionVariables.get(\"token\");",
+					"",
+					"    pm.sendRequest({",
+					"        url: pm.variables.replaceIn(\"{{BASE_URL}}articles\"),",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/json',",
+					"            'Authorization': 'Bearer ' + token",
+					"        },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                article: {",
+					"                    title: pm.variables.replaceIn(\"{{$randomWord}}\"),",
+					"                    description: pm.variables.replaceIn(\"{{$randomWords}}\"),",
+					"                    body: pm.variables.replaceIn(\"{{$randomWords}}{{$randomWords}}{{$randomWords}}\"),",
+					"                    tagList: []",
+					"                }",
+					"            })",
+					"        }",
+					"    }, (err, res) => {",
+					"        if (res) {",
+					"            const slug = res.json().article.slug;",
+					"            pm.collectionVariables.set(\"slug\", slug);",
+					"        }",
+					"    });",
+					"})(pm);`);",
+					"",
+					"pm.collectionVariables.set(\"createNewComment\", `(function(pm) {",
+					"    const token = pm.collectionVariables.get(\"token\");",
+					"    const slug = pm.collectionVariables.get(\"slug\");",
+					"",
+					"    pm.sendRequest({",
+					"        url: pm.variables.replaceIn(\"{{BASE_URL}}articles/\" + slug + \"/comments\"),",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/json',",
+					"            'Authorization': 'Bearer ' + token",
+					"        },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                comment: {",
+					"                    body: pm.variables.replaceIn(\"{{$randomWords}}\")",
+					"                }",
+					"            })",
+					"        }",
+					"    }, (err, res) => {",
+					"        if (res) {",
+					"            const commentId = res.json().comment.id;",
+					"            pm.collectionVariables.set(\"commentID\", commentId);",
+					"        }",
+					"    });",
+					"})(pm);`);",
+					"",
+					"pm.collectionVariables.set(\"deleteArticle\", `(function(pm) {",
+					"    const token = pm.collectionVariables.get(\"token\");",
+					"    const slug = pm.collectionVariables.get(\"slug\");",
+					"",
+					"    pm.sendRequest({",
+					"        url: pm.variables.replaceIn(\"{{BASE_URL}}articles/\" + slug),",
+					"        method: 'DELETE',",
+					"        header: {",
+					"            'Authorization': 'Bearer ' + token",
+					"        }",
+					"    }, (err, res) => {",
+					"        ",
+					"    });",
+					"})(pm);`);",
+					"",
+					"pm.collectionVariables.set(\"followUser\", `(function(pm) {",
+					"    const token = pm.collectionVariables.get(\"token2\");",
+					"    const username = pm.collectionVariables.get(\"username2\");",
+					"",
+					"    pm.sendRequest({",
+					"        url: pm.variables.replaceIn(\"{{BASE_URL}}profiles/\" + username + \"/follow\"),",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/json',",
+					"            'Authorization': 'Bearer ' + token",
+					"        }",
+					"    }, (err, res) => {",
+					"        if (res) {",
+					"            const profile = res.json().profile;",
+					"            pm.collectionVariables.set(\"followedUsername\", profile.username);",
+					"        }",
+					"    });",
+					"})(pm);`);",
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					"\r",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://conduit.mate.academy/api/"
+		},
+		{
+			"key": "tag",
+			"value": "tags"
+		},
+		{
+			"key": "username",
+			"value": "user789597"
+		},
+		{
+			"key": "email",
+			"value": "test789597@example.com"
+		},
+		{
+			"key": "password",
+			"value": "Qwerty123!"
+		},
+		{
+			"key": "createNewUser",
+			"value": "(function(pm) {\n    pm.sendRequest({\n        url: pm.variables.replaceIn(\"{{BASE_URL}}users\"),\n        method: 'POST',\n        header: { 'Content-Type': 'application/json' },\n        body: {\n            mode: 'raw',\n            raw: JSON.stringify({\n                user: { \n                    username: pm.collectionVariables.get(\"username\"), \n                    email: pm.collectionVariables.get(\"email\"), \n                    password: pm.collectionVariables.get(\"password\") \n                }\n            })\n        }\n    }, (err, res) => {\n\n    });\n})(pm);"
+		},
+		{
+			"key": "loginUser",
+			"value": "(function(pm) {\n    pm.sendRequest({\n        url: pm.variables.replaceIn(\"{{BASE_URL}}users/login\"),\n        method: 'POST',\n        header: { 'Content-Type': 'application/json' },\n        body: {\n            mode: 'raw',\n            raw: JSON.stringify({\n                user: { \n                    email: pm.collectionVariables.get(\"email\"), \n                    password: pm.collectionVariables.get(\"password\") \n                }\n            })\n        }\n    }, (err, res) => {\n        if (res) {\n            const token = res.json().user.token; \n            pm.collectionVariables.set(\"token\", token);\n        }\n    });\n})(pm);"
+		},
+		{
+			"key": "createNewArticle",
+			"value": "(function(pm) {\n    const token = pm.collectionVariables.get(\"token\");\n\n    pm.sendRequest({\n        url: pm.variables.replaceIn(\"{{BASE_URL}}articles\"),\n        method: 'POST',\n        header: {\n            'Content-Type': 'application/json',\n            'Authorization': 'Bearer ' + token\n        },\n        body: {\n            mode: 'raw',\n            raw: JSON.stringify({\n                article: {\n                    title: pm.variables.replaceIn(\"{{$randomWord}}\"),\n                    description: pm.variables.replaceIn(\"{{$randomWords}}\"),\n                    body: pm.variables.replaceIn(\"{{$randomWords}}{{$randomWords}}{{$randomWords}}\"),\n                    tagList: []\n                }\n            })\n        }\n    }, (err, res) => {\n        if (res) {\n            const slug = res.json().article.slug;\n            pm.collectionVariables.set(\"slug\", slug);\n        }\n    });\n})(pm);"
+		},
+		{
+			"key": "createNewComment",
+			"value": "(function(pm) {\n    const token = pm.collectionVariables.get(\"token\");\n    const slug = pm.collectionVariables.get(\"slug\");\n\n    pm.sendRequest({\n        url: pm.variables.replaceIn(\"{{BASE_URL}}articles/\" + slug + \"/comments\"),\n        method: 'POST',\n        header: {\n            'Content-Type': 'application/json',\n            'Authorization': 'Bearer ' + token\n        },\n        body: {\n            mode: 'raw',\n            raw: JSON.stringify({\n                comment: {\n                    body: pm.variables.replaceIn(\"{{$randomWords}}\")\n                }\n            })\n        }\n    }, (err, res) => {\n        if (res) {\n            const commentId = res.json().comment.id;\n            pm.collectionVariables.set(\"commentID\", commentId);\n        }\n    });\n})(pm);"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTA2OTc0MiwidXNlcm5hbWUiOiJ1c2VyNzg5NTk3IiwiZXhwIjoxNzcyOTg0NjYwLCJpYXQiOjE3Njc4MDA2NjB9.kdG8SFDC-iriBxvj5IYqZOxvASizV1TuAjuaNonunOI"
+		},
+		{
+			"key": "slug",
+			"value": "dollar-gov4ih"
+		},
+		{
+			"key": "loginUser2",
+			"value": "(function(pm) {\n    pm.sendRequest({\n        url: pm.variables.replaceIn(\"{{BASE_URL}}users/login\"),\n        method: 'POST',\n        header: { 'Content-Type': 'application/json' },\n        body: {\n            mode: 'raw',\n            raw: JSON.stringify({\n                user: { \n                    email: pm.collectionVariables.get(\"email2\"), \n                    password: pm.collectionVariables.get(\"password\") \n                }\n            })\n        }\n    }, (err, res) => {\n        if (res) {\n           if (res) {\n            const token2 = res.json().user.token; \n            pm.collectionVariables.set(\"token2\", token2);\n        }\n        }\n    });\n})(pm);"
+		},
+		{
+			"key": "deleteArticle",
+			"value": "(function(pm) {\n    const token = pm.collectionVariables.get(\"token\");\n    const slug = pm.collectionVariables.get(\"slug\");\n\n    pm.sendRequest({\n        url: pm.variables.replaceIn(\"{{BASE_URL}}articles/\" + slug),\n        method: 'DELETE',\n        header: {\n            'Authorization': 'Bearer ' + token\n        }\n    }, (err, res) => {\n        \n    });\n})(pm);"
+		},
+		{
+			"key": "followUser",
+			"value": "(function(pm) {\n    const token = pm.collectionVariables.get(\"token2\");\n    const username = pm.collectionVariables.get(\"username2\");\n\n    pm.sendRequest({\n        url: pm.variables.replaceIn(\"{{BASE_URL}}profiles/\" + username + \"/follow\"),\n        method: 'POST',\n        header: {\n            'Content-Type': 'application/json',\n            'Authorization': 'Bearer ' + token\n        }\n    }, (err, res) => {\n        if (res) {\n            const profile = res.json().profile;\n            pm.collectionVariables.set(\"followedUsername\", profile.username);\n        }\n    });\n})(pm);"
+		},
+		{
+			"key": "username2",
+			"value": "user2789597"
+		},
+		{
+			"key": "email2",
+			"value": "test2789597@example.com"
+		},
+		{
+			"key": "createNewUser2",
+			"value": "(function(pm) {\n    pm.sendRequest({\n        url: pm.variables.replaceIn(\"{{BASE_URL}}users\"),\n        method: 'POST',\n        header: { 'Content-Type': 'application/json' },\n        body: {\n            mode: 'raw',\n            raw: JSON.stringify({\n                user: { \n                    username: pm.collectionVariables.get(\"username2\"), \n                    email: pm.collectionVariables.get(\"email2\"), \n                    password: pm.collectionVariables.get(\"password\") \n                }\n            })\n        }\n    }, (err, res) => {\n\n    });\n})(pm);"
+		},
+		{
+			"key": "followedUsername",
+			"value": "user2789597"
+		},
+		{
+			"key": "commentID",
+			"value": 118695
+		},
+		{
+			"key": "token2",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTA2OTc0MywidXNlcm5hbWUiOiJ1c2VyMjc4OTU5NyIsImV4cCI6MTc3Mjk4NDY2MiwiaWF0IjoxNzY3ODAwNjYyfQ.cEc-Lewk9QX4xnBDmy-gJr3lyD6q-X1OOE1eeYXG4Sg"
+		}
+	]
+}
